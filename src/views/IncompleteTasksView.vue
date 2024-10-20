@@ -1,7 +1,7 @@
 <template>
-  <div class="text-white">
+  <div class="mt-16 text-white">
     <TaskList
-      :tasks="tasks"
+      :tasks="incompleteTasks"
       @toggle-show="toggleShow"
       @toggle-complete="toggleComplete"
       @open-edit-modal="openEditModal"
@@ -12,18 +12,20 @@
       :task="editingTask"
       @save="saveTask"
       @close="closeEditModal"
+      :isAdding="false"
     />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import TaskList from "../components/TaskList.vue";
 import EditTaskModal from "../components/TaskModal.vue";
 import { useTasks } from "../composables/useTasks";
 
 const {
   tasks,
+  incompleteTasks,
   fetchTasks,
   updateTask,
   deleteTask: removeTask,
@@ -33,7 +35,7 @@ const editingTask = ref(null);
 const emit = defineEmits(["update-counts"]);
 
 const toggleShow = (id) => {
-  const task = tasks.value.find((t) => t.id === id);
+  const task = incompleteTasks.value.find((t) => t.id === id);
   if (task) {
     task.isShow = !task.isShow;
   }
@@ -71,14 +73,9 @@ const closeEditModal = () => {
 };
 
 const saveTask = async (updatedTask) => {
-  updatedTask.isUpdating = true;
-  try {
-    await updateTask(updatedTask);
-    closeEditModal();
-    emitUpdateCounts();
-  } finally {
-    updatedTask.isUpdating = false;
-  }
+  await updateTask(updatedTask);
+  closeEditModal();
+  emitUpdateCounts();
 };
 
 const emitUpdateCounts = () => {
@@ -90,4 +87,6 @@ onMounted(async () => {
   await fetchTasks();
   emitUpdateCounts();
 });
+
+watch(tasks, emitUpdateCounts, { deep: true });
 </script>

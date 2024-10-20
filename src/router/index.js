@@ -9,6 +9,16 @@ const router = createRouter({
       name: "AllTasks",
       component: AllTasksView,
     },
+    {
+      path: "/completed",
+      name: "CompletedTasks",
+      component: () => import("../views/CompletedTasksView.vue"),
+    },
+    {
+      path: "/incomplete",
+      name: "IncompleteTasks",
+      component: () => import("../views/IncompleteTasksView.vue"),
+    },
   ],
 });
 
