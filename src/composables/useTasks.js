@@ -2,14 +2,19 @@ import { ref, computed } from "vue";
 
 const tasks = ref([]);
 
+// Экспортируем функцию useTasks
 export function useTasks() {
+  // Вычисляемое свойство для фильтрации выполненных задач
   const completedTasks = computed(() =>
     tasks.value.filter((task) => task.completed),
   );
+
+  // Вычисляемое свойство для фильтрации невыполненных задач
   const incompleteTasks = computed(() =>
     tasks.value.filter((task) => !task.completed),
   );
 
+  // Асинхронная функция для загрузки задач с сервера
   const fetchTasks = async () => {
     try {
       const response = await fetch(
@@ -19,6 +24,7 @@ export function useTasks() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
+      // Добавляем дополнительные свойства к каждой задаче
       tasks.value = data.map((task) => ({
         ...task,
         isUpdating: false,
@@ -29,6 +35,7 @@ export function useTasks() {
     }
   };
 
+  // Асинхронная функция для добавления новой задачи
   const addTask = async (newTask) => {
     try {
       const response = await fetch(
@@ -43,6 +50,7 @@ export function useTasks() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
+      // Добавляем новую задачу в начало массива
       tasks.value.unshift(data);
       return data;
     } catch (error) {
@@ -50,6 +58,7 @@ export function useTasks() {
     }
   };
 
+  // Асинхронная функция для обновления существующей задачи
   const updateTask = async (updatedTask) => {
     try {
       const response = await fetch(
@@ -64,6 +73,7 @@ export function useTasks() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
+      // Обновляем задачу в локальном массиве
       const index = tasks.value.findIndex((t) => t.id === data.id);
       if (index !== -1) {
         tasks.value[index] = { ...data, isUpdating: false, isDeleting: false };
@@ -75,6 +85,7 @@ export function useTasks() {
     }
   };
 
+  // Асинхронная функция для удаления задачи
   const deleteTask = async (id) => {
     try {
       const response = await fetch(
@@ -86,12 +97,14 @@ export function useTasks() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      // Удаляем задачу из локального массива
       tasks.value = tasks.value.filter((task) => task.id !== id);
     } catch (error) {
       console.error("Error deleting task:", error);
     }
   };
 
+  // Функция для подсчета количества задач
   const updateCounts = () => {
     return {
       total: tasks.value.length,
@@ -100,6 +113,7 @@ export function useTasks() {
     };
   };
 
+  // Возвращаем объект с функциями и данными для использования в компонентах
   return {
     tasks,
     completedTasks,

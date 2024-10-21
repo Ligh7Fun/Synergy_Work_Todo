@@ -4,6 +4,7 @@
       v-for="task in tasks"
       :key="task.id"
       class="mb-4 cursor-pointer rounded-lg bg-gray-700 p-4 transition-transform duration-200 hover:scale-[1.01]"
+      :class="{ 'border border-green-500': task.completed }"
       @click="$emit('toggle-show', task.id)"
     >
       <div class="flex items-center justify-between">
@@ -40,7 +41,7 @@
           </button>
           <button
             @click="$emit('open-edit-modal', task)"
-            class="'rounded hover:bg-yellow-600', bg-yellow-500 p-2 transition-colors duration-200"
+            class="rounded bg-yellow-500 p-2 transition-colors duration-200 hover:bg-yellow-600"
             title="Изменить задачу"
           >
             <PencilSquareIcon class="h-5 w-5 text-white" />

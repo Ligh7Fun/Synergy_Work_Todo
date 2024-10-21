@@ -125,7 +125,7 @@
     <div class="p-4 sm:ml-64">
       <router-view @update-counts="updateCounts" />
     </div>
-    <EditTaskModal
+    <TaskModal
       v-if="isAddingTask"
       :task="newTask"
       @save="addTaskHandler"
@@ -204,32 +204,38 @@
 
 <script setup>
 import { ref } from "vue";
-import EditTaskModal from "./components/TaskModal.vue";
+import TaskModal from "./components/TaskModal.vue";
 import { useTasks } from "./composables/useTasks";
 
+// Получение функций из композабла useTasks
 const { addTask, updateCounts: updateTaskCounts } = useTasks();
 
+// Реактивные переменные для хранения количества задач
 const totalTasks = ref(0);
 const completedTasks = ref(0);
 const incompleteTasks = ref(0);
 const isAddingTask = ref(false);
 const newTask = ref({ title: "", description: "", completed: false });
 
+// Функция обновления счетчиков задач
 const updateCounts = (counts) => {
   totalTasks.value = counts.total;
   completedTasks.value = counts.completed;
   incompleteTasks.value = counts.incomplete;
 };
 
+// Открытие модального окна для добавления задачи
 const openAddTaskModal = () => {
   isAddingTask.value = true;
 };
 
+// Закрытие модального окна для добавления задачи
 const closeAddTaskModal = () => {
   isAddingTask.value = false;
   newTask.value = { title: "", description: "", completed: false };
 };
 
+// Обработчик добавления новой задачи
 const addTaskHandler = async (task) => {
   await addTask(task);
   closeAddTaskModal();

@@ -42,6 +42,7 @@
 <script setup>
 import { ref, watch, computed } from "vue";
 
+// Определение входных свойств компонента
 const props = defineProps({
   task: Object,
   isAdding: {
@@ -50,10 +51,13 @@ const props = defineProps({
   },
 });
 
+// События, которые компонент может отправлять родительскому компоненту
 const emit = defineEmits(["save", "close"]);
 
+// Создание реактивной копии задачи для редактирования
 const editedTask = ref({ ...props.task });
 
+// Вычисляемое свойство для проверки введенных данных
 const isValid = computed(() => {
   return (
     editedTask.value.title.trim() !== "" &&
@@ -61,19 +65,23 @@ const isValid = computed(() => {
   );
 });
 
+// Наблюдатель за изменениями задачи
 watch(
   () => props.task,
   (newTask) => {
+    // Обновление локальной копии при изменении задачи
     editedTask.value = { ...newTask };
   },
 );
 
+// Функция сохранения задачи
 const save = () => {
   if (isValid.value) {
     emit("save", editedTask.value);
   }
 };
 
+// Функция закрытия модального окна
 const close = () => {
   emit("close");
 };

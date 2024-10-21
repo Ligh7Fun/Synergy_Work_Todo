@@ -7,7 +7,7 @@
       @open-edit-modal="openEditModal"
       @delete-task="deleteTask"
     />
-    <EditTaskModal
+    <TaskModal
       v-if="editingTask"
       :task="editingTask"
       @save="saveTask"
@@ -19,9 +19,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import TaskList from "../components/TaskList.vue";
-import EditTaskModal from "../components/TaskModal.vue";
+import TaskModal from "../components/TaskModal.vue";
 import { useTasks } from "../composables/useTasks";
 
+// Извлекаем необходимые функции и данные из useTasks
 const {
   tasks,
   fetchTasks,
@@ -29,9 +30,14 @@ const {
   deleteTask: removeTask,
   updateCounts,
 } = useTasks();
+
+// Реактивная переменная для хранения редактируемой задачи
 const editingTask = ref(null);
+
+// Определяем emit для обновления счетчиков в родительском компоненте
 const emit = defineEmits(["update-counts"]);
 
+// Функция для переключения видимости детальной информации задачи
 const toggleShow = (id) => {
   const task = tasks.value.find((t) => t.id === id);
   if (task) {
@@ -39,6 +45,7 @@ const toggleShow = (id) => {
   }
 };
 
+// Асинхронная функция для переключения статуса выполнения задачи
 const toggleComplete = async (task) => {
   task.isUpdating = true;
   try {
@@ -49,6 +56,7 @@ const toggleComplete = async (task) => {
   }
 };
 
+// Асинхронная функция для удаления задачи
 const deleteTask = async (id) => {
   const task = tasks.value.find((t) => t.id === id);
   if (task) {
@@ -62,14 +70,17 @@ const deleteTask = async (id) => {
   }
 };
 
+// Функция для открытия модального окна редактирования задачи
 const openEditModal = (task) => {
   editingTask.value = { ...task };
 };
 
+// Функция для закрытия модального окна редактирования задачи
 const closeEditModal = () => {
   editingTask.value = null;
 };
 
+// Асинхронная функция для сохранения отредактированной задачи
 const saveTask = async (updatedTask) => {
   updatedTask.isUpdating = true;
   try {
@@ -81,12 +92,15 @@ const saveTask = async (updatedTask) => {
   }
 };
 
+// Функция для отправки обновленных счетчиков в родительский компонент
 const emitUpdateCounts = () => {
   const counts = updateCounts();
   emit("update-counts", counts);
 };
 
+// Хук жизненного цикла, выполняющийся при монтировании компонента
 onMounted(async () => {
+  // Загружаем задачи и обновляем счетчики при инициализации компонента
   await fetchTasks();
   emitUpdateCounts();
 });
