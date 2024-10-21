@@ -1,7 +1,7 @@
 <template>
   <div class="mt-16">
     <div
-      v-for="task in tasks"
+      v-for="task in reversedTasks"
       :key="task.id"
       class="mb-4 cursor-pointer rounded-lg bg-gray-700 p-4 transition-transform duration-200 hover:scale-[1.01]"
       :class="{ 'border border-green-500': task.completed }"
@@ -64,7 +64,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, computed } from "vue";
 import {
   CheckIcon,
   XMarkIcon,
@@ -72,12 +72,14 @@ import {
   TrashIcon,
 } from "@heroicons/vue/24/solid";
 
-defineProps({
+const props = defineProps({
   tasks: {
     type: Array,
     required: true,
   },
 });
+
+const reversedTasks = computed(() => [...props.tasks].reverse());
 
 defineEmits([
   "toggle-show",

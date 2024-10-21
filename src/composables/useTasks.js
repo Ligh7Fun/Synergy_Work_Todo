@@ -50,8 +50,8 @@ export function useTasks() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-      // Добавляем новую задачу в начало массива
-      tasks.value.unshift(data);
+      // Добавляем новую задачу в конец массива
+      tasks.value.push(data);
       return data;
     } catch (error) {
       console.error("Error adding task:", error);
