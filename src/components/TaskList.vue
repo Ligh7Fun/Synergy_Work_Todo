@@ -1,6 +1,13 @@
 <template>
   <div class="mt-16">
     <div
+      v-if="reversedTasks.length === 0"
+      class="rounded-lg border-2 border-dashed border-red-900 p-4 text-center text-lg font-semibold text-white"
+    >
+      Нет задач или все задачи выполнены 🥳
+    </div>
+    <div
+      v-else
       v-for="task in reversedTasks"
       :key="task.id"
       class="mb-4 cursor-pointer rounded-lg bg-gray-700 p-4 transition-transform duration-200 hover:scale-[1.01]"
